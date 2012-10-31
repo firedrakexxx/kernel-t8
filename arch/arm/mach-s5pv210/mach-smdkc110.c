@@ -151,8 +151,9 @@ static struct s3c2410_uartcfg smdkc110_uartcfgs[] __initdata = {
 	},
 };
 
-#define S5PV210_LCD_WIDTH 800
-#define S5PV210_LCD_HEIGHT 480
+///////////////  EDIT BY WEI  //////////////////
+#define S5PV210_LCD_WIDTH 480 	//800
+#define S5PV210_LCD_HEIGHT 640 	//480
 
 //#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC0 (6144 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC0 (24576 * SZ_1K)

@@ -2893,7 +2893,7 @@ void zfiRecv80211(zdev_t* dev, zbuf_t* buf, struct zsAdditionInfo* addInfo)
             zmw_rx_buf_writeh(dev, buf, 24+offset, zmw_rx_buf_readh(dev, buf,
                               ZM_WLAN_HEADER_A2_OFFSET));
             zmw_rx_buf_writeh(dev, buf, 26+offset, zmw_rx_buf_readh(dev, buf,
-              !               ZM_WLAN_HEADER_A2_OFFSET+2));
+                              ZM_WLAN_HEADER_A2_OFFSET+2));
             zmw_rx_buf_writeh(dev, buf, 28+offset, zmw_rx_buf_readh(dev, buf,
                               ZM_WLAN_HEADER_A2_OFFSET+4));
             /* DA = Address 1 */
