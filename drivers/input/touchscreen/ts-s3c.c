@@ -72,6 +72,12 @@
 #define Y_COOR_FUZZ	32
 #endif
 
+#ifdef DEBUG_WEI
+	#define printkwei(args...) printk(args)
+#else
+	#define printkwei(args...)
+#endif
+
 /* For ts->dev.id.version */
 #define S3C_TSVERSION	0x0101
 
@@ -108,31 +114,45 @@ static struct s3c_ts_info	*ts;
 
 static void touch_timer_fire(unsigned long data)
 {
+	printkwei("%s\n",__func__);
 	unsigned long data0;
 	unsigned long data1;
 	int updown;
 	int x, y;
-
+printkwei("1\n");
 	data0 = readl(ts_base+S3C_ADCDAT0);
 	data1 = readl(ts_base+S3C_ADCDAT1);
 
 	updown = (!(data0 & S3C_ADCDAT0_UPDOWN)) &&
 		 (!(data1 & S3C_ADCDAT1_UPDOWN));
 
+printkwei("2\n");
 	if (updown) {
+		
+printkwei("3\n");
 		if (ts->count) {
 			x = (int)ts->xp/ts->count;
 			y = (int)ts->yp/ts->count;
+
+			x = 4095 - x;
+			y = 4095 - y;
+
+			printk("x = %d  ",x);
+			printk("y = %d  (down)\n",y);
+
 #ifdef CONFIG_FB_S3C_LTE480WV
 //			y = 4000 - y;
 #endif
 			input_report_abs(ts->dev, ABS_X, x);
 			input_report_abs(ts->dev, ABS_Y, y);
 			input_report_abs(ts->dev, ABS_Z, 0);
+			input_report_abs(ts->dev, ABS_PRESSURE, 1);
 			input_report_key(ts->dev, BTN_TOUCH, 1);
 			input_sync(ts->dev);
+			printk("pen down\n");
 		}
 
+printkwei("4\n");
 		ts->xp = 0;
 		ts->yp = 0;
 		ts->count = 0;
@@ -142,15 +162,24 @@ static void touch_timer_fire(unsigned long data)
 		writel(readl(ts_base+S3C_ADCCON) | S3C_ADCCON_ENABLE_START,
 				ts_base + S3C_ADCCON);
 	} else {
+
+printkwei("5\n");
+		printk("x = %d  ",ts->xp);
+		printk("y = %d  (up)\n",ts->yp);
+
 		ts->count = 0;
 		input_report_abs(ts->dev, ABS_X, ts->xp);
 		input_report_abs(ts->dev, ABS_Y, ts->yp);
 		input_report_abs(ts->dev, ABS_Z, 0);
+			input_report_abs(ts->dev, ABS_PRESSURE, 0);
 		input_report_key(ts->dev, BTN_TOUCH, 0);
 		input_sync(ts->dev);
 
+		printk("pen up\n");
+		
 		writel(WAIT4INT(0), ts_base+S3C_ADCTSC);
 	}
+	printkwei("%s exit\n",__func__);
 }
 
 static struct timer_list touch_timer =
@@ -158,6 +187,7 @@ static struct timer_list touch_timer =
 
 static irqreturn_t stylus_updown(int irqno, void *param)
 {
+	printkwei("%s\n",__func__);
 	unsigned long data0;
 	unsigned long data1;
 	int updown;
@@ -172,14 +202,16 @@ static irqreturn_t stylus_updown(int irqno, void *param)
 	 * the timer is running, but maybe we ought to verify that the
 	 * timer isn't running anyways. */
 
-	if (updown)
+	if (updown){
+		printkwei("updown\n");
 		touch_timer_fire(0);
-
+	}
 	if (ts->s3c_adc_con == ADC_TYPE_2) {
+		printkwei("not updown\n");
 		__raw_writel(0x0, ts_base + S3C_ADCCLRWK);
 		__raw_writel(0x0, ts_base + S3C_ADCCLRINT);
 	}
-
+	printkwei("%s exit\n",__func__);
 	return IRQ_HANDLED;
 }
 
@@ -192,6 +224,7 @@ static irqreturn_t stylus_action(int irqno, void *param)
 	data1 = readl(ts_base + S3C_ADCDAT1);
 
 	if (ts->resol_bit == 12) {
+		printkwei("resol_bit = 12\n");
 #if defined(CONFIG_TOUCHSCREEN_NEW)
 		ts->yp += S3C_ADCDAT0_XPDATA_MASK_12BIT -
 			(data0 & S3C_ADCDAT0_XPDATA_MASK_12BIT);
@@ -202,6 +235,7 @@ static irqreturn_t stylus_action(int irqno, void *param)
 			(data0 & S3C_ADCDAT0_XPDATA_MASK_12BIT);
 		ts->yp += data1 & S3C_ADCDAT1_YPDATA_MASK_12BIT;
 #endif
+		printkwei("ts->xp = %d\nts->yp = %d\n",ts->xp,ts->yp);	
 	} else {
 #if defined(CONFIG_TOUCHSCREEN_NEW)
 		ts->yp += S3C_ADCDAT0_XPDATA_MASK -
@@ -213,8 +247,9 @@ static irqreturn_t stylus_action(int irqno, void *param)
 		ts->yp += data1 & S3C_ADCDAT1_YPDATA_MASK;
 #endif
 	}
-
 	ts->count++;
+
+printkwei("ts->count = %d\n",ts->count);
 
 	if (ts->count < (1<<ts->shift)) {
 		writel(S3C_ADCTSC_PULL_UP_DISABLE | AUTOPST,
@@ -270,6 +305,7 @@ static int __init s3c_ts_probe(struct platform_device *pdev)
 	}
 
 	ts_base = ioremap(res->start, size);
+	printkwei("=============== ts_base: 0x%lx===============\n",ts_base);
 	if (ts_base == NULL) {
 		dev_err(dev, "failed to ioremap() region\n");
 		ret = -EINVAL;
@@ -284,6 +320,10 @@ static int __init s3c_ts_probe(struct platform_device *pdev)
 	}
 
 	clk_enable(ts_clock);
+
+	static volatile unsigned int *g_adc_base;
+        g_adc_base = ioremap(0xE1700000, 4);
+    	writel(readl(g_adc_base) | (1 << 17) , g_adc_base);
 
 	s3c_ts_cfg = s3c_ts_get_platdata(&pdev->dev);
 	if ((s3c_ts_cfg->presc & 0xff) > 0)
@@ -333,6 +373,7 @@ static int __init s3c_ts_probe(struct platform_device *pdev)
 	ts->dev->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
 
 	if (s3c_ts_cfg->resol_bit == 12) {
+		printkwei("WEI: input_set_abs_params 12bit\n");
 		input_set_abs_params(ts->dev,
 				ABS_X, X_COOR_MIN, X_COOR_MAX, X_COOR_FUZZ, 0);
 		input_set_abs_params(ts->dev,

@@ -566,13 +566,13 @@ static struct resource s3c_ts_resource[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	[1] = {
-		.start = IRQ_PENDN,
-		.end   = IRQ_PENDN,
+		.start = IRQ_PENDN1,
+		.end   = IRQ_PENDN1,
 		.flags = IORESOURCE_IRQ,
 	},
 	[2] = {
-		.start = IRQ_ADC,
-		.end   = IRQ_ADC,
+		.start = IRQ_ADC1,
+		.end   = IRQ_ADC1,
 		.flags = IORESOURCE_IRQ,
 	}
 };
@@ -682,7 +682,7 @@ static void __init smdkc110_dm9000_set(void)
 static struct s3cfb_lcd lte480wv = {
 	.width = S5PV210_LCD_WIDTH,
 	.height = S5PV210_LCD_HEIGHT,
-	.bpp = 32,
+	.bpp = 16,
 	.freq = 60,
 
 	.timing = {
@@ -743,7 +743,7 @@ static void lte480wv_cfg_gpio(struct platform_device *pdev)
 #define S5PV210_GPD_0_3_TOUT_3  (0x2 << 12)
 static int lte480wv_backlight_on(struct platform_device *pdev)
 {
-/*
+
 	int err;
 
 	err = gpio_request(S5PV210_GPD0(3), "GPD0");
@@ -759,13 +759,13 @@ static int lte480wv_backlight_on(struct platform_device *pdev)
 	s3c_gpio_cfgpin(S5PV210_GPD0(3), S5PV210_GPD_0_3_TOUT_3);
 
 	gpio_free(S5PV210_GPD0(3));
-*/
+
 	return 0;
 }
 
 static int lte480wv_backlight_off(struct platform_device *pdev, int onoff)
 {
-/*
+
 	int err;
 
 	err = gpio_request(S5PV210_GPD0(3), "GPD0");
@@ -778,12 +778,14 @@ static int lte480wv_backlight_off(struct platform_device *pdev, int onoff)
 
 	gpio_direction_output(S5PV210_GPD0(3), 0);
 	gpio_free(S5PV210_GPD0(3));
-*/
+
 	return 0;
 }
 
 static int lte480wv_reset_lcd(struct platform_device *pdev)
 {
+#if 1
+	printk("%s\n",__func__);
 	int err;
 
 	err = gpio_request(S5PV210_GPH0(6), "GPH0");
@@ -803,7 +805,7 @@ static int lte480wv_reset_lcd(struct platform_device *pdev)
 	mdelay(10);
 
 	gpio_free(S5PV210_GPH0(6));
-
+#endif
 	return 0;
 }
 

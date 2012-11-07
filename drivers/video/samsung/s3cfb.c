@@ -942,7 +942,8 @@ static int __devinit s3cfb_probe(struct platform_device *pdev)
 
 	if (pdata->cfg_gpio)
 		pdata->cfg_gpio(pdev);
-
+printk("WEI--------- clk_on: 0x%lx-------------\n",pdata->clk_on);
+printk("WEI--------- cfg_gpio: 0x%lx-------------\n",pdata->cfg_gpio);
 	if (pdata->clk_on)
 		pdata->clk_on(pdev, &fbdev->clock);
 

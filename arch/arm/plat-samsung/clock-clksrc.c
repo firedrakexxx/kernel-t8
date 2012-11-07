@@ -23,6 +23,8 @@
 #include <plat/clock-clksrc.h>
 #include <plat/cpu-freq.h>
 
+#include <linux/delay.h>
+
 static inline struct clksrc_clk *to_clksrc(struct clk *clk)
 {
 	return container_of(clk, struct clksrc_clk, clk);
