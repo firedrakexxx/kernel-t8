@@ -63,6 +63,7 @@ void s3cfb_cfg_gpio(struct platform_device *pdev)
 
 int s3cfb_clk_on(struct platform_device *pdev, struct clk **s3cfb_clk)
 {
+#if 0
 	struct clk *sclk = NULL;
 	struct clk *mout_mpll = NULL;
 	u32 rate = 0;
@@ -92,7 +93,37 @@ int s3cfb_clk_on(struct platform_device *pdev, struct clk **s3cfb_clk)
 	clk_enable(sclk);
 
 	*s3cfb_clk = sclk;
+#else
+	struct clk *sclk = NULL;
+	struct clk *mout_epll = NULL;
+	u32 rate = 0;
 
+	sclk = clk_get(&pdev->dev, "sclk_fimd");
+	if (IS_ERR(sclk)) {
+		dev_err(&pdev->dev, "failed to get sclk for fimd\n");
+		goto err_clk1;
+	}
+
+	mout_epll = clk_get(&pdev->dev, "mout_epll");
+	if (IS_ERR(mout_epll)) {
+		dev_err(&pdev->dev, "failed to get mout_epll\n");
+		goto err_clk2;
+	}
+
+	clk_set_parent(sclk, mout_epll);
+
+	if (!rate)
+		rate = 166750000;
+
+	clk_set_rate(sclk, rate);
+	dev_dbg(&pdev->dev, "set fimd sclk rate to %d\n", rate);
+
+	clk_put(mout_epll);
+
+	clk_enable(sclk);
+
+	*s3cfb_clk = sclk;
+#endif
 	return 0;
 
 err_clk2:

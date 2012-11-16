@@ -682,7 +682,7 @@ static void __init smdkc110_dm9000_set(void)
 static struct s3cfb_lcd lte480wv = {
 	.width = S5PV210_LCD_WIDTH,
 	.height = S5PV210_LCD_HEIGHT,
-	.bpp = 32,
+	.bpp = 16,
 	.freq = 60,
 
 	.timing = {
@@ -737,16 +737,18 @@ static void lte480wv_cfg_gpio(struct platform_device *pdev)
 	writel(0x000000ff, S5PV210_GPF3_BASE + 0xc);
 }
 
+#define S5PV210_GPD_0_1_OUTPUT  (0x1)
+
 #define S5PV210_GPD_0_0_TOUT_0  (0x2)
 #define S5PV210_GPD_0_1_TOUT_1  (0x2 << 4)
 #define S5PV210_GPD_0_2_TOUT_2  (0x2 << 8)
 #define S5PV210_GPD_0_3_TOUT_3  (0x2 << 12)
 static int lte480wv_backlight_on(struct platform_device *pdev)
 {
-/*
+
 	int err;
 
-	err = gpio_request(S5PV210_GPD0(3), "GPD0");
+	err = gpio_request(S5PV210_GPD0(1), "GPD0");
 
 	if (err) {
 		printk(KERN_ERR "failed to request GPD0 for "
@@ -754,21 +756,23 @@ static int lte480wv_backlight_on(struct platform_device *pdev)
 		return err;
 	}
 
-	gpio_direction_output(S5PV210_GPD0(3), 1);
+	gpio_direction_output(S5PV210_GPD0(1), 1);
+///////////////  临时改为背光直接打开关闭  /////////////////
+	s3c_gpio_cfgpin(S5PV210_GPD0(1), S5PV210_GPD_0_1_OUTPUT);
 
-	s3c_gpio_cfgpin(S5PV210_GPD0(3), S5PV210_GPD_0_3_TOUT_3);
+	gpio_direction_output(S5PV210_GPD0(1), 1);
+///////////////    留待以后完善为PWM方式   /////////////////
+	gpio_free(S5PV210_GPD0(1));
 
-	gpio_free(S5PV210_GPD0(3));
-*/
 	return 0;
 }
 
 static int lte480wv_backlight_off(struct platform_device *pdev, int onoff)
 {
-/*
+
 	int err;
 
-	err = gpio_request(S5PV210_GPD0(3), "GPD0");
+	err = gpio_request(S5PV210_GPD0(1), "GPD0");
 
 	if (err) {
 		printk(KERN_ERR "failed to request GPD0 for "
@@ -776,9 +780,9 @@ static int lte480wv_backlight_off(struct platform_device *pdev, int onoff)
 		return err;
 	}
 
-	gpio_direction_output(S5PV210_GPD0(3), 0);
-	gpio_free(S5PV210_GPD0(3));
-*/
+	gpio_direction_output(S5PV210_GPD0(1), 0);
+	gpio_free(S5PV210_GPD0(1));
+
 	return 0;
 }
 

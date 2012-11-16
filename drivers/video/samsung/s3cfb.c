@@ -175,7 +175,7 @@ static int s3cfb_map_video_memory(struct fb_info *fb)
 			 (unsigned int)fix->smem_start,
 			 (unsigned int)fb->screen_base, fix->smem_len);
 
-	memset(fb->screen_base, 0, fix->smem_len);
+	//memset(fb->screen_base, 0, fix->smem_len);
 	win->owner = DMA_MEM_FIMD;
 
 	return 0;
@@ -732,7 +732,7 @@ static void s3cfb_init_fbinfo(struct s3cfb_global *ctrl, int id)
 	var->xres_virtual = var->xres;
 	var->yres_virtual = var->yres * CONFIG_FB_S3C_NR_BUFFERS;
 #endif
-	var->bits_per_pixel = 32;
+	var->bits_per_pixel = 16;
 	var->xoffset = 0;
 	var->yoffset = 0;
 	var->width = lcd->p_width;
@@ -903,6 +903,11 @@ static int s3cfb_sysfs_store_win_power(struct device *dev,
 static DEVICE_ATTR(win_power, S_IRUGO | S_IWUSR,
 		   s3cfb_sysfs_show_win_power, s3cfb_sysfs_store_win_power);
 
+void set_reg(struct s3cfb_global *ctrl, int offset, unsigned val)
+{
+	writel(val, ctrl->regs+offset);
+}
+
 static int __devinit s3cfb_probe(struct platform_device *pdev)
 {
 	struct s3c_platform_fb *pdata;
@@ -941,7 +946,7 @@ static int __devinit s3cfb_probe(struct platform_device *pdev)
 	fbdev->lcd = (struct s3cfb_lcd *)pdata->lcd;
 
 	if (pdata->cfg_gpio)
-		pdata->cfg_gpio(pdev);
+		//pdata->cfg_gpio(pdev);
 
 	if (pdata->clk_on)
 		pdata->clk_on(pdev, &fbdev->clock);
@@ -1024,7 +1029,15 @@ static int __devinit s3cfb_probe(struct platform_device *pdev)
 		fb_show_logo(fbdev->fb[pdata->default_win], FB_ROTATE_UR);
 	}
 #endif
-
+/*
+	set_reg(fbdev,0,0x97); 	
+	set_reg(fbdev,0x4,0x60); 	
+	set_reg(fbdev,0x20,0x8015);
+	set_reg(fbdev,0x44,0x1df27f); 
+	set_reg(fbdev,0x48,0x100200); 
+	set_reg(fbdev,0xd0,0x2983a800); 
+	set_reg(fbdev,0x100,0x3c0);
+*/
 	return 0;
 
 err_irq:
