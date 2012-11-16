@@ -84,7 +84,6 @@ int s3cfb_clk_on(struct platform_device *pdev, struct clk **s3cfb_clk)
 
 	if (!rate)
 		rate = 166750000;
-
 	clk_set_rate(sclk, rate);
 	dev_dbg(&pdev->dev, "set fimd sclk rate to %d\n", rate);
 
