@@ -406,7 +406,7 @@ int __init s3c24xx_register_baseclocks(unsigned long xtal)
 	clk_xtal.rate = xtal;
 
 	/* register our clocks */
-
+			
 	if (s3c24xx_register_clock(&clk_xtal) < 0)
 		printk(KERN_ERR "failed to register master xtal\n");
 

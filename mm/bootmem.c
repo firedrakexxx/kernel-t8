@@ -638,7 +638,10 @@ find_block:
 
 		region = phys_to_virt(PFN_PHYS(bdata->node_min_pfn) +
 				start_off);
-		memset(region, 0, size);
+
+		if (size != 0x4b0000)   // modified by Santiage: for test
+			memset(region, 0, size);
+
 		/*
 		 * The min_count is set to 0 so that bootmem allocated blocks
 		 * are never reported as leaks.

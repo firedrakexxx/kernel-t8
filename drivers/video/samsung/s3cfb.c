@@ -175,7 +175,7 @@ static int s3cfb_map_video_memory(struct fb_info *fb)
 			 (unsigned int)fix->smem_start,
 			 (unsigned int)fb->screen_base, fix->smem_len);
 
-	memset(fb->screen_base, 0, fix->smem_len);
+	//memset(fb->screen_base, 0, fix->smem_len);
 	win->owner = DMA_MEM_FIMD;
 
 	return 0;
@@ -732,7 +732,7 @@ static void s3cfb_init_fbinfo(struct s3cfb_global *ctrl, int id)
 	var->xres_virtual = var->xres;
 	var->yres_virtual = var->yres * CONFIG_FB_S3C_NR_BUFFERS;
 #endif
-	var->bits_per_pixel = 32;
+	var->bits_per_pixel = 16;//32;
 	var->xoffset = 0;
 	var->yoffset = 0;
 	var->width = lcd->p_width;
@@ -843,6 +843,7 @@ static int s3cfb_register_framebuffer(struct s3cfb_global *ctrl)
 				s3cfb_set_par(ctrl->fb[j]);
 				s3cfb_draw_logo(ctrl->fb[j]);
 			}
+
 #endif
 	}
 
@@ -903,6 +904,26 @@ static int s3cfb_sysfs_store_win_power(struct device *dev,
 static DEVICE_ATTR(win_power, S_IRUGO | S_IWUSR,
 		   s3cfb_sysfs_show_win_power, s3cfb_sysfs_store_win_power);
 
+void set_reg(struct s3cfb_global *ctrl, int offset, unsigned val)
+{
+	writel(val, ctrl->regs+offset);
+}
+
+void print_regs(unsigned long start, unsigned long end)
+{
+	int index;
+	int count = (end-start)/4;
+	unsigned long *vidcon0 = ioremap(0xF8000000,count);
+	printk("\n|----------- Start Print Regs ------------|\n");
+	for(index=0; index<=count; index++)
+	{
+		printk("0x%08lx: 0x%08lx\n",0xf8000000+index*4,*((unsigned long *)vidcon0+index));
+	}
+	iounmap(vidcon0);
+	printk("|----------- End Of Print Regs ------------|\n");
+}
+
+#include <linux/delay.h>
 static int __devinit s3cfb_probe(struct platform_device *pdev)
 {
 	struct s3c_platform_fb *pdata;
@@ -941,9 +962,10 @@ static int __devinit s3cfb_probe(struct platform_device *pdev)
 	fbdev->lcd = (struct s3cfb_lcd *)pdata->lcd;
 
 	if (pdata->cfg_gpio)
-		pdata->cfg_gpio(pdev);
+		//pdata->cfg_gpio(pdev);
 printk("WEI--------- clk_on: 0x%lx-------------\n",pdata->clk_on);
 printk("WEI--------- cfg_gpio: 0x%lx-------------\n",pdata->cfg_gpio);
+
 	if (pdata->clk_on)
 		pdata->clk_on(pdev, &fbdev->clock);
 
@@ -961,7 +983,6 @@ printk("WEI--------- cfg_gpio: 0x%lx-------------\n",pdata->cfg_gpio);
 		ret = -EINVAL;
 		goto err_io;
 	}
-
 	fbdev->regs = ioremap(res->start, res->end - res->start + 1);
 	if (!fbdev->regs) {
 		dev_err(fbdev->dev, "failed to remap io region\n");
@@ -978,16 +999,17 @@ printk("WEI--------- cfg_gpio: 0x%lx-------------\n",pdata->cfg_gpio);
 		goto err_alloc;
 	}
 
+	print_regs(0xf8000000,0xf8000820);
 	if (s3cfb_register_framebuffer(fbdev)) {
 		ret = -EINVAL;
 		goto err_register;
 	}
 
 	s3cfb_set_clock(fbdev);
+
 	s3cfb_set_window(fbdev, pdata->default_win, 1);
 
 	s3cfb_display_on(fbdev);
-
 	fbdev->irq = platform_get_irq(pdev, 0);
 	if (request_irq(fbdev->irq, s3cfb_irq_frame, IRQF_SHARED,
 			pdev->name, fbdev)) {
@@ -1026,6 +1048,15 @@ printk("WEI--------- cfg_gpio: 0x%lx-------------\n",pdata->cfg_gpio);
 	}
 #endif
 
+	set_reg(fbdev,0,0x97); 	
+	set_reg(fbdev,0x4,0x60); 	
+	set_reg(fbdev,0x20,0x8015);
+	set_reg(fbdev,0x44,0x1df27f); 
+	set_reg(fbdev,0x48,0x100200); 
+	set_reg(fbdev,0xd0,0x2983a800); 
+	set_reg(fbdev,0x100,0x3c0); 	
+	
+	print_regs(0xf8000000,0xf8000820);
 	return 0;
 
 err_irq:

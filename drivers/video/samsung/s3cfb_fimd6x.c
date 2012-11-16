@@ -465,6 +465,8 @@ int s3cfb_win_map_off(struct s3cfb_global *ctrl, int id)
 
 int s3cfb_set_window_control(struct s3cfb_global *ctrl, int id)
 {
+	printk("$$$$$  %s  $$$$$\n",__func__);
+
 	struct s3c_platform_fb *pdata = to_fb_plat(ctrl->dev);
 	struct fb_info *fb = ctrl->fb[id];
 	struct fb_var_screeninfo *var = &fb->var;
@@ -479,6 +481,7 @@ int s3cfb_set_window_control(struct s3cfb_global *ctrl, int id)
 		S3C_WINCON_INRGB_MASK | S3C_WINCON_DATAPATH_MASK);
 
 	if (win->path != DATA_PATH_DMA) {
+		printk("111\n");
 		dev_dbg(ctrl->dev, "[fb%d] data path: fifo\n", id);
 
 		cfg |= S3C_WINCON_DATAPATH_LOCAL;
@@ -503,6 +506,7 @@ int s3cfb_set_window_control(struct s3cfb_global *ctrl, int id)
 			}
 		}
 	} else {
+		printk("222\n");
 		dev_dbg(ctrl->dev, "[fb%d] data path: dma\n", id);
 
 		cfg |= S3C_WINCON_DATAPATH_DMA;
@@ -522,17 +526,21 @@ int s3cfb_set_window_control(struct s3cfb_global *ctrl, int id)
 			cfg |= S3C_WINCON_BURSTLEN_16WORD;
 
 		/* bpp mode set */
+		printk("bits_per_pixel: %d\n",fb->var.bits_per_pixel);
 		switch (fb->var.bits_per_pixel) {
 		case 16:
 			if (var->transp.length == 1) {
+				printk("A1-R5-G5-B5\n");
 				dev_dbg(ctrl->dev,
 					"[fb%d] bpp mode: A1-R5-G5-B5\n", id);
 				cfg |= S3C_WINCON_BPPMODE_16BPP_A555;
 			} else if (var->transp.length == 4) {
+				printk("A4-R4-G4-B4\n");
 				dev_dbg(ctrl->dev,
 					"[fb%d] bpp mode: A4-R4-G4-B4\n", id);
 				cfg |= S3C_WINCON_BPPMODE_16BPP_A444;
 			} else {
+				printk("R5-G6-B5\n");
 				dev_dbg(ctrl->dev,
 					"[fb%d] bpp mode: R5-G6-B5\n", id);
 				cfg |= S3C_WINCON_BPPMODE_16BPP_565;
