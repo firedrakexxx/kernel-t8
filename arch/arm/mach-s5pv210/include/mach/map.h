@@ -168,8 +168,8 @@
 #define S5PV2XX_SZ_KEYPAD       SZ_4K
 
 /* hcj: we use CON1 */
-#define S5PV2XX_PA_ADC          (0xE1700000)
-/*#define S5PV2XX_PA_ADC          (0xE1701000)*/
+/*#define S5PV2XX_PA_ADC          (0xE1700000)*/
+#define S5PV2XX_PA_ADC          (0xE1701000)
 
 #define S3C_PA_ADC              S5PV2XX_PA_ADC
 

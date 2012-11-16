@@ -566,13 +566,13 @@ static struct resource s3c_ts_resource[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	[1] = {
-		.start = IRQ_PENDN,
-		.end   = IRQ_PENDN,
+		.start = IRQ_PENDN1,
+		.end   = IRQ_PENDN1,
 		.flags = IORESOURCE_IRQ,
 	},
 	[2] = {
-		.start = IRQ_ADC,
-		.end   = IRQ_ADC,
+		.start = IRQ_ADC1,
+		.end   = IRQ_ADC1,
 		.flags = IORESOURCE_IRQ,
 	}
 };
@@ -788,6 +788,8 @@ static int lte480wv_backlight_off(struct platform_device *pdev, int onoff)
 
 static int lte480wv_reset_lcd(struct platform_device *pdev)
 {
+#if 1
+	printk("%s\n",__func__);
 	int err;
 
 	err = gpio_request(S5PV210_GPH0(6), "GPH0");
@@ -807,7 +809,7 @@ static int lte480wv_reset_lcd(struct platform_device *pdev)
 	mdelay(10);
 
 	gpio_free(S5PV210_GPH0(6));
-
+#endif
 	return 0;
 }
 
