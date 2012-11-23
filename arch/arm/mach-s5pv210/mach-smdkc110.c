@@ -103,6 +103,70 @@
 #include <plat/clock.h>
 #include <plat/regs-otg.h>
 #include <../../../drivers/video/samsung/s3cfb.h>
+#include <linux/gpio_keys.h>
+
+static struct gpio_keys_button s5pv210_buttons[] = {
+	{
+		.gpio 	= S5PV210_GPH2(0),
+		.code 	= KEY_BACK,
+		.desc 	= "Button 1",
+		.active_low = 1,
+	},{
+		.gpio 	= S5PV210_GPH2(1),
+		.code 	= KEY_HOME,
+		.desc 	= "Button 2",
+		.active_low = 1,
+	},
+	{
+		.gpio 	= S5PV210_GPH2(2),
+		.code 	= KEY_MENU,
+		.desc 	= "Button 3",
+		.active_low = 1,
+	},
+	{
+		.gpio 	= S5PV210_GPH2(3),
+		.code 	= KEY_UP,
+		.desc 	= "Button 4",
+		.active_low = 1,
+	},
+	{
+		.gpio 	= S5PV210_GPH3(0),
+		.code 	= KEY_DOWN,
+		.desc 	= "Button 5",
+		.active_low = 1,
+	},
+	{
+		.gpio 	= S5PV210_GPH3(1),
+		.code 	= KEY_LEFT,
+		.desc 	= "Button 6",
+		.active_low = 1,
+	},
+	{
+		.gpio 	= S5PV210_GPH3(2),
+		.code 	= KEY_RIGHT,
+		.desc 	= "Button 7",
+		.active_low = 1,
+	},
+	{
+		.gpio 	= S5PV210_GPH3(3),
+		.code 	= KEY_POWER,
+		.desc 	= "Button 8",
+		.active_low = 1,
+	},
+};
+
+static struct gpio_keys_platform_data s5pv210_button_data = {
+	.buttons 	= s5pv210_buttons,
+	.nbuttons 	= ARRAY_SIZE(s5pv210_buttons),
+};
+
+static struct platform_device s5pv210_gpio_button_dev = {
+	.name 	= "gpio-keys",
+	.id 	= -1,
+	.dev 	= {
+		.platform_data 	= &s5pv210_button_data,
+	}
+};
 
 /* Following are default values for UCON, ULCON and UFCON UART registers */
 #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
@@ -1431,7 +1495,9 @@ static struct platform_device *smdkc110_devices[] __initdata = {
 #ifdef CONFIG_TOUCHSCREEN_S3C
 	&s3c_device_ts,
 #endif
-	&s3c_device_keypad,
+	//&s3c_device_keypad,
+	
+	&s5pv210_gpio_button_dev,
 #ifdef CONFIG_S5P_ADC
 	&s3c_device_adc,
 #endif
