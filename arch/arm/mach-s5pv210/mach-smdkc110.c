@@ -757,11 +757,8 @@ static int lte480wv_backlight_on(struct platform_device *pdev)
 	}
 
 	gpio_direction_output(S5PV210_GPD0(1), 1);
-///////////////  临时改为背光直接打开关闭  /////////////////
-	s3c_gpio_cfgpin(S5PV210_GPD0(1), S5PV210_GPD_0_1_OUTPUT);
+	s3c_gpio_cfgpin(S5PV210_GPD0(1), S5PV210_GPD_0_1_TOUT_1);
 
-	gpio_direction_output(S5PV210_GPD0(1), 1);
-///////////////    留待以后完善为PWM方式   /////////////////
 	gpio_free(S5PV210_GPD0(1));
 
 	return 0;
@@ -788,8 +785,7 @@ static int lte480wv_backlight_off(struct platform_device *pdev, int onoff)
 
 static int lte480wv_reset_lcd(struct platform_device *pdev)
 {
-#if 1
-	printk("%s\n",__func__);
+#if 0
 	int err;
 
 	err = gpio_request(S5PV210_GPH0(6), "GPH0");
@@ -901,7 +897,7 @@ struct s3c_pwm_data pwm_data[] = {
 
 #if defined(CONFIG_BACKLIGHT_PWM)
 static struct platform_pwm_backlight_data smdk_backlight_data = {
-	.pwm_id  = 3,
+	.pwm_id  = 1,
 	.max_brightness = 255,
 	.dft_brightness = 255,
 	.pwm_period_ns  = 2500000,
@@ -911,14 +907,14 @@ static struct platform_device smdk_backlight_device = {
 	.name      = "pwm-backlight",
 	.id        = -1,
 	.dev        = {
-		.parent = &s3c_device_timer[3].dev,
+		.parent = &s3c_device_timer[1].dev,
 		.platform_data = &smdk_backlight_data,
 	},
 };
 
 static void __init smdk_backlight_register(void)
 {
-#if 0
+#if 1
 	int ret;
 #ifdef CONFIG_HAVE_PWM
 	int i, ntimer;
