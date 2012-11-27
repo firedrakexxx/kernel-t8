@@ -516,6 +516,7 @@ static int __init snd_mem_init(void)
 	snd_mem_proc = proc_create(SND_MEM_PROC_FILE, 0644, NULL,
 				   &snd_mem_proc_fops);
 #endif
+	printk("%s success\n",__func__);
 	return 0;
 }
 

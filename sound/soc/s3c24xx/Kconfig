@@ -99,11 +99,25 @@ config SND_S5PV2XX_SOC_WM8580
 	select SND_SOC_WM8580
 	select SND_SAMSUNG_SOC_I2S_V5
 	help
+
+config SND_S5PV2XX_SOC_WM8960
+	tristate "SoC I2S Audio support for WM8960 on SMDKV2XX"
+	depends on SND_S3C24XX_SOC && ARCH_S5PV210
+	select SND_SOC_WM8960
+	select SND_SAMSUNG_SOC_I2S_V5
+	help
 	  Say Y if you want to add support for SoC audio on the SMDKV210.
 
 config WM8580_MASTER
 	bool "WM8580 Codec Master"
 	depends on (SND_S5PV2XX_SOC_WM8580 || SND_S3C64XX_SOC_WM8580)
+	default n
+	help
+	  Say Y if you want to run WM8580 Codec as a I2S-Master.
+
+config WM8960_MASTER
+	bool "WM8960 Codec Master"
+	depends on (SND_S5PV2XX_SOC_WM8960)
 	default n
 	help
 	  Say Y if you want to run WM8580 Codec as a I2S-Master.

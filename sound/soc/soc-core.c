@@ -2769,7 +2769,8 @@ static int __init snd_soc_init(void)
 		debugfs_root = NULL;
 	}
 #endif
-
+	
+	printk("%s will success\n",__func__);
 	return platform_driver_register(&soc_driver);
 }
 

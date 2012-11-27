@@ -1010,6 +1010,7 @@ static __devinit int wm8960_i2c_probe(struct i2c_client *i2c,
 
 	codec->dev = &i2c->dev;
 
+	printk("%s will success\n");
 	return wm8960_register(wm8960, SND_SOC_I2C);
 }
 
@@ -1045,7 +1046,7 @@ static int __init wm8960_modinit(void)
 		printk(KERN_ERR "Failed to register WM8960 I2C driver: %d\n",
 		       ret);
 	}
-
+	printk("%s success\n");
 	return ret;
 }
 module_init(wm8960_modinit);

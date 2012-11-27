@@ -43,6 +43,12 @@ else
 snd-soc-smdk64xx-wm8580-objs := smdk64xx_wm8580slv.o
 snd-soc-smdkv2xx-wm8580-objs := smdkv2xx_wm8580slv.o
 endif
+
+ifeq ($(CONFIG_WM8960_MASTER),y)
+snd-soc-smdkv2xx-wm8960-objs := smdkv2xx_wm8960mst.o
+else
+snd-soc-smdkv2xx-wm8960-objs := smdkv2xx_wm8960slv.o
+endif
 snd-soc-smdk-wm9713-objs := smdk_wm9713.o
 
 snd-soc-herring-wm8994-objs := herring-wm8994.o
@@ -69,6 +75,7 @@ obj-$(CONFIG_SND_S3C64XX_SOC_WM8580_PCM) += snd-soc-smdk64xx-wm8580-pcm.o
 obj-$(CONFIG_SND_SOC_SMDK_WM8994) += snd-soc-smdk-wm8994.o
 obj-$(CONFIG_SND_SOC_SMDK_WM9713) += snd-soc-smdk-wm9713.o
 obj-$(CONFIG_SND_S5PV2XX_SOC_WM8580) += snd-soc-smdkv2xx-wm8580.o
+obj-$(CONFIG_SND_S5PV2XX_SOC_WM8960) += snd-soc-smdkv2xx-wm8960.o
 obj-$(CONFIG_SND_S5PV2XX_SOC_WM8580_PCM) += snd-soc-smdkv2xx-wm8580-pcm.o
 obj-$(CONFIG_SND_S3C64XX_SOC_S5M8751) += snd-soc-smdk64xx-s5m8751.o
 obj-$(CONFIG_SND_S3C64XX_SOC_S5M8752) += snd-soc-smdk64xx-s5m8752.o

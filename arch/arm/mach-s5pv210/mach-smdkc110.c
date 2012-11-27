@@ -1294,9 +1294,9 @@ static struct s3c_platform_jpeg jpeg_plat __initdata = {
 
 /* I2C0 */
 static struct i2c_board_info i2c_devs0[] __initdata = {
-#ifdef CONFIG_SND_SOC_WM8580
+#ifdef CONFIG_SND_SOC_WM8960
 	{
-		I2C_BOARD_INFO("wm8580", 0x1b),
+		I2C_BOARD_INFO("wm8960", 0x1a),
 	},
 #endif
 /* hcj needs modification */
@@ -1466,8 +1466,10 @@ static struct platform_device *smdkc110_devices[] __initdata = {
 #endif
 	&s5p_device_rtc,
 #ifdef CONFIG_SND_S3C64XX_SOC_I2S_V4
-	&s5pv210_device_iis0,
+	//&s5pv210_device_iis0,
 #endif
+	&s5pv210_device_iis0,
+
 #ifdef CONFIG_SND_S3C_SOC_AC97
 	&s5pv210_device_ac97,
 #endif

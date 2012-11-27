@@ -1955,6 +1955,7 @@ static int __init alsa_timer_init(void)
 		snd_printk(KERN_ERR "unable to register timer device (%i)\n",
 			   err);
 	snd_timer_proc_init();
+	printk("%s success\n",__func__);
 	return 0;
 }
 

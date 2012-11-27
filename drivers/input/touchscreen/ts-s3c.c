@@ -64,12 +64,12 @@
 #define CONFIG_CPU_S5PV210_EVT1
 
 #ifdef CONFIG_CPU_S5PV210_EVT1
-#define X_COOR_MIN	290
-#define X_COOR_MAX	3780
-#define X_COOR_FUZZ	170
-#define Y_COOR_MIN	310
-#define Y_COOR_MAX	3800
-#define Y_COOR_FUZZ	170
+#define X_COOR_MIN	0
+#define X_COOR_MAX	4095
+#define X_COOR_FUZZ	70
+#define Y_COOR_MIN	0
+#define Y_COOR_MAX	4095
+#define Y_COOR_FUZZ	70
 #endif
 
 #ifdef DEBUG_WEI
