@@ -28,7 +28,7 @@
  *    o Support for reduced codec oversampling rates.
  *    o Support for reduced codec bias currents.
  */
-
+#define DEBUG 1
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/init.h>

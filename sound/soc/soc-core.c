@@ -867,6 +867,7 @@ static struct snd_pcm_ops soc_pcm_ops = {
 /* powers down audio subsystem for suspend */
 static int soc_suspend(struct device *dev)
 {
+	printk("%s\n",__func__);
 	struct platform_device *pdev = to_platform_device(dev);
 	struct snd_soc_device *socdev = platform_get_drvdata(pdev);
 	struct snd_soc_card *card = socdev->card;
@@ -1077,6 +1078,7 @@ static void soc_resume_deferred(struct work_struct *work)
 /* powers up audio subsystem after a suspend */
 static int soc_resume(struct device *dev)
 {
+	printk("%s\n",__func__);
 	struct platform_device *pdev = to_platform_device(dev);
 	struct snd_soc_device *socdev = platform_get_drvdata(pdev);
 	struct snd_soc_card *card = socdev->card;
@@ -1320,6 +1322,7 @@ static void snd_soc_instantiate_cards(void)
 /* probes a new socdev */
 static int soc_probe(struct platform_device *pdev)
 {
+	printk("%s\n",__func__);
 	int ret = 0;
 	struct snd_soc_device *socdev = platform_get_drvdata(pdev);
 	struct snd_soc_card *card = socdev->card;

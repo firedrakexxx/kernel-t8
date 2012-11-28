@@ -48,7 +48,7 @@ static int smdk64xx_hw_params(struct snd_pcm_substream *substream,
 	default:
 		return -EINVAL;
 	}
-
+printk("bfs: %d\n",bfs);
 	/* The Fvco for WM8960 PLLs must fall within [90,100]MHz.
 	 * This criterion can't be met if we request PLL output
 	 * as {8000x256, 64000x256, 11025x256}Hz.
@@ -84,9 +84,9 @@ static int smdk64xx_hw_params(struct snd_pcm_substream *substream,
 	default:
 		return -EINVAL;
 	}
-
+printk("rfs: %d\n",rfs);
 	rclk = params_rate(params) * rfs;
-
+printk("rclk: %d\n",rclk);
 	switch (rclk) {
 	case 4096000:
 	case 5644800:
@@ -125,7 +125,7 @@ static int smdk64xx_hw_params(struct snd_pcm_substream *substream,
 		return ret;
 
 	/* We use MUX for basic ops in SoC-Master mode */
-/*	ret = snd_soc_dai_set_sysclk(cpu_dai, S3C64XX_CLKSRC_MUX,
+	ret = snd_soc_dai_set_sysclk(cpu_dai, S3C64XX_CLKSRC_MUX,
 					0, SND_SOC_CLOCK_IN);
 	if (ret < 0)
 		return ret;
@@ -141,7 +141,7 @@ static int smdk64xx_hw_params(struct snd_pcm_substream *substream,
 	ret = snd_soc_dai_set_clkdiv(cpu_dai, S3C_I2SV2_DIV_RCLK, rfs);
 	if (ret < 0)
 		return ret;
-*/
+
 	return 0;
 }
 
@@ -185,6 +185,7 @@ static const struct snd_soc_dapm_route audio_map_rx[] = {
 
 static int smdk64xx_wm8960_init_paiftx(struct snd_soc_codec *codec)
 {
+	printk("%s\n",__func__);
 	int ret;
 
 	/* Add smdk64xx specific Capture widgets */
@@ -235,6 +236,7 @@ static int smdk64xx_wm8960_init_paiftx(struct snd_soc_codec *codec)
 
 static int smdk64xx_wm8960_init_paifrx(struct snd_soc_codec *codec)
 {
+	printk("%s\n",__func__);
 	int ret;
 
 	/* Add smdk64xx specific Playback widgets */
@@ -318,6 +320,7 @@ static struct snd_soc_device smdk64xx_snd_devdata = {
 
 static int set_epll_rate(unsigned long rate)
 {
+	printk("%s\n",__func__);
 	struct clk *fout_epll;
 
 	fout_epll = clk_get(NULL, "fout_epll");
@@ -328,11 +331,11 @@ static int set_epll_rate(unsigned long rate)
 
 	if (rate == clk_get_rate(fout_epll))
 		goto out;
-
+	printk("fout_epll: rate=%d\n",clk_get_rate(fout_epll));
+	printk("rate: rate=%d\n",rate);	
 	clk_disable(fout_epll);
 	clk_set_rate(fout_epll, rate);
 	clk_enable(fout_epll);
-while(1);
 out:
 	clk_put(fout_epll);
 
@@ -342,6 +345,7 @@ out:
 static struct platform_device *smdk64xx_snd_device;
 static int __init smdk64xx_audio_init(void)
 {
+	printk("%s\n",__func__);
 	int ret;
 
 	smdk64xx_snd_device = platform_device_alloc("soc-audio", 0);

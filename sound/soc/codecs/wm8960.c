@@ -474,8 +474,9 @@ static int wm8960_mute(struct snd_soc_dai *dai, int mute)
 static int wm8960_set_bias_level_out3(struct snd_soc_codec *codec,
 				      enum snd_soc_bias_level level)
 {
+	printk("%s\n",__func__);
 	u16 reg;
-
+	printk("%s: level=%d\n",__func__,level);
 	switch (level) {
 	case SND_SOC_BIAS_ON:
 		break;
@@ -883,6 +884,7 @@ EXPORT_SYMBOL_GPL(soc_codec_dev_wm8960);
 static int wm8960_register(struct wm8960_priv *wm8960,
 			   enum snd_soc_control_type control)
 {
+	printk("%s\n",__func__);
 	struct wm8960_data *pdata = wm8960->codec.dev->platform_data;
 	struct snd_soc_codec *codec = &wm8960->codec;
 	int ret;
@@ -940,6 +942,7 @@ static int wm8960_register(struct wm8960_priv *wm8960,
 	codec->set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 
 	/* Latch the update bits */
+/*
 	reg = snd_soc_read(codec, WM8960_LINVOL);
 	snd_soc_write(codec, WM8960_LINVOL, reg | 0x100);
 	reg = snd_soc_read(codec, WM8960_RINVOL);
@@ -960,6 +963,41 @@ static int wm8960_register(struct wm8960_priv *wm8960,
 	snd_soc_write(codec, WM8960_LOUT2, reg | 0x100);
 	reg = snd_soc_read(codec, WM8960_ROUT2);
 	snd_soc_write(codec, WM8960_ROUT2, reg | 0x100);
+*/
+	
+	reg = snd_soc_read(codec, WM8960_POWER2);
+	snd_soc_write(codec, WM8960_POWER2, reg | 1<<8 | 1<<7 | 1<<4 | 1<<3);
+	
+	reg = snd_soc_read(codec, WM8960_POWER1);
+	snd_soc_write(codec, WM8960_POWER1, reg | 1<<6);
+
+	reg = snd_soc_read(codec, WM8960_LOUT1);
+	snd_soc_write(codec, WM8960_LOUT1, 0x5F | 0x100);
+
+	reg = snd_soc_read(codec, WM8960_ROUT1);
+	snd_soc_write(codec, WM8960_ROUT1, 0x5F | 0x100);
+
+	reg = snd_soc_read(codec, WM8960_CLOCK1);
+	snd_soc_write(codec, WM8960_CLOCK1, 0x0); // CLKSEL = 0 : no PLL -> SYSCLK using MCLK
+
+	reg = snd_soc_read(codec, WM8960_DACCTL1);
+	snd_soc_write(codec, WM8960_DACCTL1, 0x0); // set no mute
+	
+	reg = snd_soc_read(codec, WM8960_IFACE1);
+	snd_soc_write(codec, WM8960_IFACE1, 0x2); // 00 = 16bits,  10 = IIS format
+	
+	reg = snd_soc_read(codec, WM8960_LDAC);
+	snd_soc_write(codec, WM8960_RADC, reg | 0x100);
+	
+	reg = snd_soc_read(codec, WM8960_RDAC);
+	snd_soc_write(codec, WM8960_RDAC, reg | 0x100);
+	
+	
+	reg = snd_soc_read(codec, WM8960_LOUTMIX);
+	snd_soc_write(codec, WM8960_LOUTMIX, reg | 1<<8);
+	
+	reg = snd_soc_read(codec, WM8960_ROUTMIX);
+	snd_soc_write(codec, WM8960_ROUTMIX, reg | 1<<8);
 
 	wm8960_codec = codec;
 

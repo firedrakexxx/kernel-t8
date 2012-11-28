@@ -352,6 +352,8 @@ static int s5p_i2s_set_sysclk(struct snd_soc_dai *cpu_dai,
 			clk_set_rate(clk, 67738000);
 			break;
 		}
+
+printk("%s: freq=%d\n",__func__,freq);
 		clk_enable(clk);
 		clk_put(clk);
 		break;
