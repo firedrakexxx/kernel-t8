@@ -323,7 +323,7 @@ static int set_epll_rate(unsigned long rate)
 	printk("%s\n",__func__);
 	struct clk *fout_epll;
 
-	fout_epll = clk_get(NULL, "fout_epll");
+	fout_epll = clk_get(NULL, "sclk_audio");
 	if (IS_ERR(fout_epll)) {
 		printk(KERN_ERR "%s: failed to get fout_epll\n", __func__);
 		return -ENOENT;

@@ -11,7 +11,7 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-
+#define DEBUG 1
 #include <linux/init.h>
 #include <linux/delay.h>
 #include <linux/module.h>

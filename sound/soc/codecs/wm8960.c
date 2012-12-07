@@ -437,6 +437,7 @@ static int wm8960_hw_params(struct snd_pcm_substream *substream,
 			    struct snd_pcm_hw_params *params,
 			    struct snd_soc_dai *dai)
 {
+	printk("%s\n",__func__);
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_device *socdev = rtd->socdev;
 	struct snd_soc_codec *codec = socdev->card->codec;
@@ -689,6 +690,7 @@ static int pll_factors(unsigned int source, unsigned int target,
 static int wm8960_set_dai_pll(struct snd_soc_dai *codec_dai, int pll_id,
 		int source, unsigned int freq_in, unsigned int freq_out)
 {
+	printk("%s\n",__func__);
 	struct snd_soc_codec *codec = codec_dai->codec;
 	u16 reg;
 	static struct _pll_div pll_div;
@@ -736,6 +738,7 @@ static int wm8960_set_dai_pll(struct snd_soc_dai *codec_dai, int pll_id,
 static int wm8960_set_dai_clkdiv(struct snd_soc_dai *codec_dai,
 		int div_id, int div)
 {
+	printk("%s\n",__func__);
 	struct snd_soc_codec *codec = codec_dai->codec;
 	u16 reg;
 
